@@ -9,26 +9,33 @@
 
 /* mycompany DB */
 
-select 4+5; /* mysql은 from이 필수가 아니다. oracle은 필수 */
+
+select 4+5; /* mysql은 from이 필수가 아니다. but oracle은 필수 */
+
 SELECT * FROM mycompany.dept;
+
 SELECT deptno, dname, loc
 FROM dept;
 
-/* 0과 null은 다르다! comm 컬럼 참조 */
+/* 0과 null은 다르다!  --  아래 sql 실행시 comm 컬럼 참조 */
 SELECT ename, empno, sal+1, hiredate, comm
 FROM emp;
 
 /* null은 연산이 되지 않는다. */
-SELECT ename, sal, comm, sal + comm
+/* smith의 comm 컬럼에 null이 있어 연산 안 됨 */
+SELECT ename, sal, comm, sal + comm 
 FROM emp
 WHERE ename = 'SMITH';
 
+
 /* DB에서 null은 연산이 안 되어 골치아프다 
 이걸 처리할 함수가 각 DB마다 있다
-IFNULL 함수*/
+IFNULL 함수   -- 데이터가 바뀌는 게 아님!
+IFNULL(A, B)   A가 null이면 B로 대체 */ 
 SELECT  ename, sal, comm, sal + IFNULL(comm, 0)
 FROM emp
 WHERE ename = 'SMITH';
+
 
 /* 연봉 */
 SELECT empno, ename, (sal + IFNULL(comm, 0)) *12
@@ -40,7 +47,7 @@ FROM emp;
 SELECT  *
 FROM emp;
 
-/* 별칭 */ 
+/* 별칭 - mysql에서 별칭 쓸 때면 " " 를 쓴다. 나머지는 전부 ' ' */ 
 SELECT empno AS "사원번호", ename AS "사원이름", (sal + IFNULL(comm, 0)) *12 as "Annual Salary"
 FROM emp;
 
@@ -50,14 +57,14 @@ FROM emp;
 
 
 /* emp 테이블의 레코드 개수만큼 aaa를 찍는다*/ 
-SELECT 'aaa' 
+SELECT 'aaa'
 FROM emp; 
 
-/* ALL 컬럼명 (중복 허용, 디폴트)*/
+/* ALL 컬럼명 ( 중복 데이터 표시, 디폴트)*/
 SELECT ALL job 
 FROM emp;
 
-/* DISTINCT 컬럼명 (중복 불허용)*/
+/* DISTINCT 컬럼명 (중복 데이터 미표시)*/
 SELECT DISTINCT job 
 FROM emp;
 
@@ -72,15 +79,19 @@ WHERE ename = UPPER('smith');
 구분을 하자 */
 
 
+/* 현재 시간 , mysql 버전 */
+SELECT now(), version();
 
-/* 1980년 입사한 직원 */
+
+/* 1987년에 입사한 사원의 이름과 봉급과 입사날짜를 출력하시오. */
 /* 날짜형은 내부적으로 숫자로 저장되기 때문에 비교가 가능하다 */
-SELECT empno, ename, hiredate
+SELECT empno, ename, sal, hiredate
 FROM emp
 WHERE hiredate >= '1980-01-01' AND hiredate<='1980-12-31';
 
 
-SELECT now(), version();
+select ename, sal, hiredate from emp 
+where hiredate LIKE '1987%';
 
 
 /* BETWEEN A AND B */
@@ -96,7 +107,6 @@ WHERE job IN('CLERK' , 'ANALYST'); /* job = 'CLERK' or job = 'ANALYST';
 or로 쓰면 너무 길어지니까 IN()으로 묶는다 */
 
 
-
 /* <패턴매칭>    1글자 대용>  _     여러글자 대용>  %     */
 
 SELECT ename
@@ -104,17 +114,18 @@ FROM emp
 WHERE ename LIKE 'S%'; /* s로 시작하는 사원 이름 */
 
 
-
 SELECT ename
 FROM emp
 WHERE ename LIKE '%T'; /* t로 끝나는 사원 이름 */
 
 
+
 SELECT ename FROM emp WHERE ename LIKE '%I%'; 
 SELECT ename FROM emp WHERE ename LIKE '%I_'; 
 
-SELECT ename, job,hiredate FROM emp
+SELECT ename, job, hiredate FROM emp
 WHERE hiredate LIKE '1987%';
+
 
 /* 우리 회사 직원 중에 보너스를 받는 사람은? */
 SELECT empno, ename, comm, deptno
@@ -128,10 +139,9 @@ SELECT empno, ename, hiredate, sal
 FROM emp
 ORDER BY hiredate DESC, sal ASC;
 
+
 /* 우리 회사 직원 중 20번 부서 또는 30번 부서의 연봉 내림차순으로 출력하시오 */
 SELECT deptno, (sal + IFNULL(comm, 0)) * 12 AS Annual
 FROM emp
 WHERE deptno IN(20, 30)
 ORDER BY Annual DESC; 
-
-
