@@ -1,3 +1,10 @@
+/*
+	Author: N
+    Date : 2024-07-23
+    Objective: Basic SELECT
+    Environment : Windows10, MySQL Workbench 8.0.38, MySQL 8.0.63
+    
+*/
 
 /*  7월 23일 */
 
@@ -14,9 +21,9 @@ FROM emp
 WHERE deptno = 20;
 
 /* 그룹 함수 사용시 주의점. 레코드 개수가 다르면 오류난다 */
-SELECT ename, AVG(sal) /* 14개, 1개로 개수 불일치로 오류 남 */
-FROM emp
-WHERE deptno = 20;
+/* SELECT ename, AVG(sal)  14개, 1개로 개수 불일치로 오류 남 */
+SELECT AVG(comm), AVG(IFNULL(comm, 0)), SUM(IFNULL(comm, 0)) / COUNT(*)
+FROM emp;
 
 /* null은 계산에 제외된다 
 IFNULL로 0으로 값 변경 -> 계산에 포함되어 결과가 다르게 나온다 */
@@ -45,7 +52,8 @@ SELECT job, SUM(sal)
 from emp
 GROUP BY job;
 
-/* 입사 연도별 */
+
+/* 입사 연도별 ********/
 SELECT YEAR(hiredate), COUNT(*) AS "카운트"
 FROM emp
 GROUP BY YEAR(hiredate)
@@ -55,34 +63,35 @@ ORDER BY YEAR(hiredate);
 /* 멀티플 GROUP BY */
 SELECT deptno, job, count(*)
 FROM emp
-GROUP BY deptno, job /* 그룹바이 있는 요소가 select에 올라와야 한다 */
+GROUP BY deptno, job /* group by 에 있는 요소가 select에 올라와야 한다 */
 ORDER BY deptno ASC; 
 
 
-/* WITH ROLLUP */
+/* WITH ROLLUP */ /*  항목별 합계에 전체 합계 행이 하나 추가된다 */
 SELECT deptno, job, SUM(sal)
 FROM emp
 GROUP BY deptno, job
-WITH ROLLUP; /* 소계 - 각 그룹의 합, 전체 합을 보여준다 */
+WITH ROLLUP;  /* 각 그룹의 전체 합을 보여주는 행 추가 */
 
 
-/* 안 됨 오류-! */
-/* CROSS join(카티시안 곱) - 두 테이블에 관계가 없을 때 사용. - 비표준join, 표준join*/
+
+/* CROSS join(카티시안 곱) - 두 테이블에 관계가 없을 때 사용. 
+첫번째 테이블의 모든 행이 두번째 테이블의 모든 행에 조인됨
+- 비표준join, 표준join*/
 /* 비표준 join ->  */
-SELECT emp.ename, emp.sal, dept.detpno, dept.loc
+SELECT empno, ename, dname
 FROM emp, dept;
 
 /* 표준 join */
-SELECT emp.ename, emp.sal, dept.detpno, dept.loc, salgrade.grade
-FROM emp CROSS JOIN dept CROSS JOIN salgrade;
+SELECT  emp.ename, emp.sal, dept.deptno, dept.loc, salgrade.grade
+FROM   emp CROSS JOIN dept CROSS JOIN salgrade ;
 
 
 /* CROSS JOIN */
 /* 비표준 join , 근데 많이 쓰인다, 별칭을 쓸 수 있다. */
 SELECT ename, d.deptno, loc
-FROM dept d, emp e /* 이게 제일 먼저 실행되니까 */
+FROM dept d, emp e /* 이게 제일 먼저 실행된다 */
 WHERE d.deptno = e.deptno AND name = 'SMITH';
-
 
 
 
