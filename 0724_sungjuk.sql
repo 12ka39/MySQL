@@ -1,0 +1,11 @@
+CREATE TABLE Student(
+hakbun CHAR(4)   PRIMARY KEY,
+name VARCHAR(20) NOT NULL, 
+kor TINYINT      NOT NULL,
+eng TINYINT      NOT NULL,
+mat TINYINT      NOT NULL,
+edp TINYINT      NOT NULL,
+tot SMALLINT,
+avg FLOAT(5,2),
+grade CHAR(1)
+);
