@@ -6,6 +6,7 @@
     
 */
 
+
 /*  7월 23일 */
 
 /* mycompany db */
@@ -74,33 +75,49 @@ GROUP BY deptno, job
 WITH ROLLUP;  /* 각 그룹의 전체 합을 보여주는 행 추가 */
 
 
+/* 표준 JOIN - 다양한 데이터베이스 시스템에서 동일하게 작동.
+   INNER JOIN, LEFT (OUTER) JOIN, RIGHT (OUTER) JOIN, FULL (OUTER) JOIN */
 
-/* CROSS join(카티시안 곱) - 두 테이블에 관계가 없을 때 사용. 
-첫번째 테이블의 모든 행이 두번째 테이블의 모든 행에 조인됨
-- 비표준join, 표준join*/
-/* 비표준 join ->  */
+/* 비표준 JOIN  - SQL 표준을 따르지 않는 JOIN 방법들로, 주로 MySQL에서 특화된 기능이나 구문을 사용합니다. 다른 DBMS에서는 동일한 방식으로 동작하지 않을 수 있습니다.
+STRAIGHT_JOIN, CROSS JOIN, NATURAL JOIN */
+
+/* CROSS JOIN(카티션 곱) - 두 테이블에 관계가 없을 때 사용. 
+두 테이블의 모든 가능한 행 조합을 반환
+- 비표준join */
+
 SELECT empno, ename, dname
 FROM emp, dept;
 
-/* 표준 join */
+/* 비표준 join - CROSS JOIN */
 SELECT  emp.ename, emp.sal, dept.deptno, dept.loc, salgrade.grade
-FROM   emp CROSS JOIN dept CROSS JOIN salgrade ;
+FROM   emp 
+CROSS JOIN dept CROSS JOIN salgrade ;
 
 
-/* CROSS JOIN */
-/* 비표준 join , 근데 많이 쓰인다, 별칭을 쓸 수 있다. */
+/* 비표준 join (카티션곱에 조건 준 거) , 근데 많이 쓰인다, 별칭을 쓸 수 있다. */
 SELECT ename, d.deptno, loc
 FROM dept d, emp e /* 이게 제일 먼저 실행된다 */
-WHERE d.deptno = e.deptno AND name = 'SMITH';
+WHERE d.deptno = e.deptno AND ename = 'SMITH';
+
+
+/* 아래 2개의 문장을 하나로 만든 게 위에 있는 sql*/
+SELECT deptno
+FROM emp
+WHERE ename = 'SMITH';  /* 20 */
+
+SELECT loc
+FROM dept
+WHERE deptno = 20;
 
 
 
+/* 위 sql과 결과는 같은데 다른 방법을 이용해보았다. */
 
 SELECT ename, loc
 /* FROM emp NATURAL JOIN dept  */
 /* FROM emp INNER JOIN dept USING(deptno) */
-FROM emp JOIN dept ON(emp.deptno = dept.deptno)
-/* 계속 조건을 추가하려면 join aaa on ()  ....추가 */
+FROM emp JOIN dept ON(emp.deptno = dept.deptno) /* 특별한 조인 유형을 지정하지 않으면 기본적으로 INNER JOIN으로 간주 */
+/* 계속 조건을 추가하려면 join aaa on () JOIN bbb ON()   JOIN ccc ON()  ....추가 */
 WHERE ename = 'SMITH';
 
 
@@ -120,22 +137,27 @@ WHERE city.name = 'SEOUL';
 /* mycompany DB*/
 use mycompany;
 
-/* 비등가 join */  /* 이것도 오류 */
-/*
+/* 비등가 join */
 SELECT ename, sal, grade
 FROM emp, salgrade
-WHERE (sal BETWEEN losal AND hisal)
-		 AND ename ='SMITH"; 
-         */
-       
-/* 이것도 안 됨 */
-SELECT emp.ename, emp.empno.dept.dname, dept.loc
-FROM emp RIGHT OUTER JOIN dept ON (emp.deptno = dept.deptno);
-/* FROM emp INNER JOIN dept ON (emp.deptno = dept.deptno);  이렇게 하면 오류 나는 거 정상*/ 
-
+WHERE (sal BETWEEN losal AND hisal) 
+						AND ename ='SMITH'; 
          
-CREATE TABLE emp1 SELECT * FROM emp;
- 
+       
+SELECT  dept.deptno, dname, AVG(sal), SUM(sal)
+FROM   emp JOIN dept ON(emp.deptno = dept.deptno)
+GROUP BY deptno;
+       
+
+SELECT emp.ename, emp.empno, dept.dname, dept.loc
+FROM emp RIGHT OUTER JOIN dept ON (emp.deptno = dept.deptno);
+/* FROM emp INNER JOIN dept ON (emp.deptno = dept.deptno);  이렇게 하면 오류 나는 거 정상.. 왜??*/ 
+
+/* 테이블 그대로 데이터 까지 복사 */         
+CREATE TABLE emp1 
+AS
+SELECT * FROM emp;
+
 INSERT INTO emp1(empno,ename, sal, job,deptno)
 VALUES(8282, 'JACK',3000, 'ANALYST',50);
          
