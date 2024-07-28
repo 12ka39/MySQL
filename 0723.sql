@@ -68,11 +68,12 @@ GROUP BY deptno, job /* group by 에 있는 요소가 select에 올라와야 한
 ORDER BY deptno ASC; 
 
 
-/* WITH ROLLUP */ /*  항목별 합계에 전체 합계 행이 하나 추가된다 */
+/* WITH ROLLUP */ /*  부서별 합계 + 전체 합계 행이 하나 추가된다 */
 SELECT deptno, job, SUM(sal)
 FROM emp
 GROUP BY deptno, job
-WITH ROLLUP;  /* 각 그룹의 전체 합을 보여주는 행 추가 */
+WITH ROLLUP;  /*  부서별 합계 + 전체 합계 행이 하나 추가된다 */
+
 
 
 /* 표준 JOIN - 다양한 데이터베이스 시스템에서 동일하게 작동.
