@@ -182,7 +182,7 @@ SELECT mgr
 FROM emp
 WHERE empno = '7902';
 
-/* SELF JOIN 실행은 되는데 왜 이렇게 쓰는지 모르겠음 */
+/* SELF JOIN */
 SELECT CONCAT(worker.ename, '의 관리자의 이름은 ',  manager.ename, '입니다.')
 FROM   emp  worker JOIN emp manager 
 ON   worker.mgr = manager.empno;
@@ -246,7 +246,7 @@ FROM dept
 WHERE deptno=(SELECT deptno FROM emp WHERE ename='SMITH');
 
 
-/* 부서에서 최소 급여를 받는 사람 --- 바로 쿼리 못 짰음 */
+/* 부서에서 최소 급여를 받는 사람 --- 바로 쿼리 짜도록 연습하자 */
 select * from dept;
 select min(sal) from emp group by deptno;
 
