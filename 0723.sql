@@ -149,15 +149,26 @@ SELECT  dept.deptno, dname, AVG(sal), SUM(sal)
 FROM   emp JOIN dept ON(emp.deptno = dept.deptno)
 GROUP BY deptno;
        
-
+/* RIGHT OUTER JOIN    null 값 있을 수 있음 */
 SELECT emp.ename, emp.empno, dept.dname, dept.loc
 FROM emp RIGHT OUTER JOIN dept ON (emp.deptno = dept.deptno);
-/* FROM emp INNER JOIN dept ON (emp.deptno = dept.deptno);  이렇게 하면 오류 나는 거 정상.. 왜??*/ 
+
+/* INNER JOIN    null 값 없음 */
+SELECT emp.ename, emp.empno, dept.dname, dept.loc
+FROM emp INNER JOIN dept ON (emp.deptno = dept.deptno);
 
 /* 테이블 그대로 데이터 까지 복사 */         
 CREATE TABLE emp1 
 AS
 SELECT * FROM emp;
+
+
+/* 말이 안 되는 조건을 줘서 테이블 구조'만' 복사 */  
+CREATE TABLE emp2
+AS
+SELECT * FROM emp
+where detno = 0;  /* 말이 안 되는 조건 */
+
 
 
 INSERT INTO emp1(empno, ename, sal, job,deptno)
