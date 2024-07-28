@@ -158,34 +158,41 @@ CREATE TABLE emp1
 AS
 SELECT * FROM emp;
 
-INSERT INTO emp1(empno,ename, sal, job,deptno)
-VALUES(8282, 'JACK',3000, 'ANALYST',50);
+
+INSERT INTO emp1(empno, ename, sal, job,deptno)
+VALUES(8282, 'JACK', 3000, 'ANALYST',50);
+
+select * from emp1 where ename = 'jack';
          
+/* LEFT OUTER JOIN */         
 SELECT e.ename, e.job, e.sal, d.loc, d.dname
 FROM emp1 e LEFT OUTER JOIN dept d
 ON (e.deptno = d.deptno);
          
          
          
-/* self join은 반드시 별칭을 써야 한다*/
+/* SELF JOIN 반드시 별칭을 써야 한다. 
+안 쓰면 테이블명이 다 자기자신 구분이 안 됨*/
+/* 우선은 SELF JOIN 안 하면 쿼리 2개 써야 함 */
 SELECT mgr
 FROM emp
 WHERE ename = 'SMITH'; /* 7902 */
-
 
 SELECT mgr
 FROM emp
 WHERE empno = '7902';
 
-/* 실행은 되는데 왜 이렇게 쓰는지 모르겠음 */
-SELECT CONCAT(worker.ename, ' 의 관리자의 이름은 ', manager.ename, ' 입니다.')
-FROM emp worker JOIN emp manager
-ON worker.mgr = manager.empno;
-/* WHERE employer.ename = 'SMITH'; */
+/* SELF JOIN 실행은 되는데 왜 이렇게 쓰는지 모르겠음 */
+SELECT CONCAT(worker.ename, '의 관리자의 이름은 ',  manager.ename, '입니다.')
+FROM   emp  worker JOIN emp manager 
+ON   worker.mgr = manager.empno;
+/* WHERE worker.ename = 'SMITH'; */ 
 
 
 
 /* UNION  중복 허용X */
+/* 2개의 쿼리를 위아래로 이어붙여 출력하는 쿼리
+위쪽 쿼리와 아래쪽 쿼리 칼럼의 개수, 데이터 타입 동일해야 한다 */
 
 SELECT job, deptno
 FROM emp
@@ -199,7 +206,9 @@ WHERE deptno = 10;
 
 
 
+
 /* UNION ALL 중복 허용 */ 
+/* 위아래의 쿼리 결과를 하나의 결과로 출력하는 집합 연산 */
 SELECT job, deptno
 FROM emp
 WHERE sal >= 3000
@@ -212,21 +221,22 @@ WHERE deptno = 10;
 
 /* 서브 쿼리 - 서브 쿼리부터 수행된다*/
 /* 사원 번호 7566의 급여보다 많이 받는 사원의 이름 */
-/* 이 두 줄을 하나로 */
+/* 2개의 쿼리를 */
 SELECT sal FROM emp WHERE empno = 7566; 
 SELECT ename FROM emp WHERE sal > 2975.00;
 
+/* 하나의 쿼리로 */
 SELECT ename 
 FROM emp 
 WHERE sal > (SELECT sal FROM emp WHERE empno = 7566);
 
 
 /* 스미스는 어디에서 근무하는가? */
-SELECT deptno
-FROM emp
-WHERE ename='SMITH';
+SELECT deptno 
+FROM emp 
+WHERE ename='SMITH';  /* 20 */
 
-SELECT loc
+SELECT loc 
 FROM dept
 WHERE deptno=20;
 
@@ -236,9 +246,11 @@ FROM dept
 WHERE deptno=(SELECT deptno FROM emp WHERE ename='SMITH');
 
 
-/* 부서에서 최소 급여를 받는 사람- - 이것도 안 됨 */
-IN(1300.00, 800.00, 950.00) 
+/* 부서에서 최소 급여를 받는 사람 --- 바로 쿼리 못 짰음 */
+select * from dept;
+select min(sal) from emp group by deptno;
+
+/* IN(1300.00, 800.00, 950.00) */  
 SELECT ename, deptno, sal
 FROM emp
-WHERE sal IN(SELECT MIN(SAL) FROM emp
-GROUP BY depno);
+WHERE sal IN(SELECT MIN(sal) FROM emp GROUP BY deptno);
