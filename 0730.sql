@@ -2,6 +2,7 @@
 
 	VIEW - 보안과 빠른 속도를 위해 쓰인다
     PROCEDURE - 리턴 없는 함수
+    FUNCTION   - 리턴 o
 
 	Author: N
     Date : 2024-07-30
@@ -17,7 +18,7 @@ OR REPLACE
 /* VIEW */
 CREATE VIEW aaa
 AS
-SELECT empno,ename, job
+SELECT empno, ename, job
 FROM emp
 WHERE deptno=10;
 
@@ -35,17 +36,24 @@ WHERE dept.deptno = 30;
 
 SELECT * FROM bbb;
 
-
-CREATE OR REPLACE VIEW EMP20(ENO,NAME,PAYROLL)
+/* view 만들면서 컬럼 이름 바꾸기 */
+CREATE OR REPLACE VIEW EMP21(ENO, NAME, PAYROLL)
 AS
-SELECT EMPNO,ENAME,SAL
-FROMEMP
- 163   WHEREDEPTNO=20;
+SELECT empno, ename, sal
+FROM emp
+WHERE deptno =20;
  
- DESC INFORMATION_SCHEMA.VIEWS;
+ /* 바뀐 컬럼명으로 나타나는 걸 확인할 수 있다 */ 
+ SELECT * FROM EMP21;
+ 
+/* VIEW 정보 보기 */
+DESC INFORMATION_SCHEMA.VIEWS;
+
+SELECT * FROM INFORMATION_SCHEMA.VIEWS
+WHERE TABLE_NAME='emp21';
  
 /* 단순 뷰 - 단순뷰는 READ, WRITE 가 된다 
-INSERT 쿼리를 쓸 수 있다는 뜻 */
+ =====> INSERT 쿼리를 쓸 수 있다는 뜻 */
 CREATE VIEW EMP_30_VU
 AS
 SELECT empno, ename, sal, deptno
@@ -56,7 +64,7 @@ SELECT *
 FROM EMP_30_VU;
 
 INSERT INTO EMP_30_VU
-VALUES(1111, 'Jimin', 500, 30);
+VALUES(1112, 'Jimin', 500, 30);
 
 
 /*  WITH CHECK OPTION -- 업데이트 방지(안전장치) */
@@ -77,6 +85,7 @@ UPDATE emp_20
 SET deptno = 30
 WHERE empno = 7369; /* 오류 나는 거 정상 */
 
+
 /* INDEX  인덱스 - 속도 때문에 쓴다 */ 
 SHOW INDEX FROM emp;
 
@@ -86,7 +95,9 @@ CREATE INDEX i_emp_ename ON emp(ename);
 /* pdf 12장 - stored procedure는 보안, 퍼포먼스 좋지만 
 JPA에서는 에러 메시지가 잘 안 떠서 안 쓴다. 
 jpa 에서는 sql문을 쓴다. */
-/* $$ 로 써도 됨   delimiter : 시작 ~ 끝*/
+
+
+/* delimiter : 시작 ~ 끝   $$ 로 써도 됨 */
 
 delimiter //
 CREATE PROCEDURE if_test()
@@ -100,8 +111,7 @@ BEGIN
 	END IF;
 END
 //
-delimiter ;
-
+delimiter ; /* ; 를 한칸 띄어줘야 오류가 안 난다*/
 
 CALL if_test();
 
