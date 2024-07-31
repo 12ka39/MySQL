@@ -60,6 +60,7 @@ CALL deleteDept();
 
 
 
+
 /* IN 파라미터 있는 stored procedure  ----------*/ 
 
 DELIMITER $$
@@ -114,13 +115,15 @@ SELECT @t_name, @t_loc;
 /* v_name 으로 값을 입력 받아 그 값을 v_str에 넣고, 
 그 값을 다시 v_name에 담아서 내보낸다 */
  /* v_name 에 새 값을 입력하기 위해 임시변수 v_str 가 필요 */
- 
+
+drop PROCEDURE selectDname;
+
 DELIMITER $$
 CREATE PROCEDURE selectDname(
 	INOUT v_name VARCHAR(14)
 )
 BEGIN
-	DECLARE v_str VARCHAR(14); /* 임시변수 */
+	DECLARE v_str VARCHAR(13); /* 임시변수 */
 	SELECT loc INTO v_str
     FROM dept
     WHERE dname = v_name;  /* v_name 에 새 값을 입력하기 위해 임시변수 v_str 가 필요 */
